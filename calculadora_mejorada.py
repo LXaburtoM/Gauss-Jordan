@@ -498,6 +498,16 @@ class CalculadoraAlgebraMejorada:
             if info_detallada['variables_libres']:
                 resultado.append(f"• Variables libres: {info_detallada['variables_libres']}")
                 resultado.append(f"  (Total: {info_detallada['num_variables_libres']} variables libres)")
+                
+                # Mostrar ecuaciones de variables libres
+                if hasattr(solucionador, 'obtener_ecuaciones_variables_libres'):
+                    ecuaciones = solucionador.obtener_ecuaciones_variables_libres(
+                        solucionador.pasos[-1][0] if solucionador.pasos else None, n
+                    )
+                    if ecuaciones:
+                        resultado.append("• Ecuaciones de variables libres:")
+                        for ecuacion in ecuaciones:
+                            resultado.append(f"  {ecuacion}")
             else:
                 resultado.append("• Variables libres: Ninguna")
             

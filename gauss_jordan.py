@@ -2,11 +2,7 @@ import numpy as np
 from typing import Tuple, List, Optional, Dict, Set
 
 class GaussJordan:
-    """
-    Clase para resolver sistemas de ecuaciones lineales usando eliminacion de Gauss-Jordan.
-    Soporta matrices rectangulares y detecta columnas pivotes, variables libres,
-    y clasifica sistemas como unicos, infinitos o inconsistentes.
-    """
+   
     
     def __init__(self):
         self.pasos = []  # Almacena los pasos de la eliminacion
@@ -162,19 +158,31 @@ class GaussJordan:
             solucion = self._extraer_solucion_unica(aumentada, n)
             mensaje = f"Sistema con solucion unica\n"
             mensaje += f"Rango: {self.rango_matriz}\n"
-            mensaje += f"Columnas pivote: {[c+1 for c in self.columnas_pivote]}\n"
+            mensaje += f"Columnas pivote: {{{', '.join(str(c+1) for c in self.columnas_pivote)}}}\n"
             mensaje += f"Variables libres: Ninguna"
             return solucion, True, mensaje
         else:
-            # Infinitas soluciones
-            self.tipo_sistema = "infinito"
-            solucion = self._extraer_solucion_particular(aumentada, n)
-            num_libres = len(self.variables_libres)
-            mensaje = f"Sistema con infinitas soluciones\n"
-            mensaje += f"Rango: {self.rango_matriz}\n"
-            mensaje += f"Columnas pivote: {[c+1 for c in self.columnas_pivote]}\n"
-            mensaje += f"Variables libres: {[v+1 for v in self.variables_libres]} ({num_libres} variables)"
-            return solucion, False, mensaje
+            # Verificar si realmente forma matriz identidad en las columnas pivote
+            es_matriz_identidad = self._verificar_matriz_identidad(aumentada, n)
+            
+            if es_matriz_identidad:
+                # Infinitas soluciones
+                self.tipo_sistema = "infinito"
+                solucion = self._extraer_solucion_particular(aumentada, n)
+                num_libres = len(self.variables_libres)
+                mensaje = f"Sistema con infinitas soluciones\n"
+                mensaje += f"Rango: {self.rango_matriz}\n"
+                mensaje += f"Columnas pivote: {{{', '.join(str(c+1) for c in self.columnas_pivote)}}}\n"
+                mensaje += f"Variables libres: {{{', '.join(str(v+1) for v in self.variables_libres)}}} ({num_libres} variables)"
+                return solucion, False, mensaje
+            else:
+                # No forma matriz identidad - inconsistente
+                self.tipo_sistema = "inconsistente"
+                mensaje = f"Sistema inconsistente\n"
+                mensaje += f"Rango: {self.rango_matriz}\n"
+                mensaje += f"No forma matriz identidad en las columnas pivote\n"
+                mensaje += f"Columnas pivote: {{{', '.join(str(c+1) for c in self.columnas_pivote)}}}"
+                return None, False, mensaje
     
     def _calcular_rango_aumentada(self, aumentada: np.ndarray, m: int, n: int) -> int:
         """Calcula el rango de la matriz aumentada."""
@@ -244,9 +252,99 @@ class GaussJordan:
             'tipo_sistema': self.tipo_sistema,
             'rango_matriz': self.rango_matriz,
             'rango_aumentada': self.rango_aumentada,
-            'columnas_pivote': [c + 1 for c in self.columnas_pivote],  # Base 1
-            'variables_libres': [v + 1 for v in self.variables_libres],  # Base 1
+            'columnas_pivote': {c + 1 for c in self.columnas_pivote},  # Base 1 con llaves
+            'variables_libres': {v + 1 for v in self.variables_libres},  # Base 1 con llaves
             'num_variables_libres': len(self.variables_libres),
             'es_consistente': self.rango_matriz == self.rango_aumentada,
             'tiene_solucion_unica': self.tipo_sistema == "unico"
         }
+    
+    def obtener_ecuaciones_variables_libres(self, aumentada: np.ndarray, n: int) -> List[str]:
+        """
+        Genera las ecuaciones para las variables libres en terminos de las variables basicas.
+        
+        Args:
+            aumentada: Matriz aumentada en forma escalonada reducida
+            n: Numero de variables
+            
+        Returns:
+            Lista de ecuaciones para las variables libres
+        """
+        ecuaciones = []
+        
+        if not self.variables_libres or aumentada is None:
+            return ecuaciones
+        
+        # Asegurar que aumentada es una matriz 2D
+        if len(aumentada.shape) == 1:
+            return ecuaciones
+            
+        # Para cada variable libre, expresarla en términos de variables básicas
+        for var_libre in self.variables_libres:
+            # Buscar si esta variable libre aparece en alguna fila
+            ecuacion_partes = []
+            
+            # Examinar cada fila pivote
+            for i, col_pivote in enumerate(self.columnas_pivote):
+                if i < len(aumentada) and var_libre < aumentada.shape[1] - 1:  # No incluir columna aumentada
+                    coef = -aumentada[i, var_libre]  # Negativo porque lo pasamos al otro lado
+                    
+                    if abs(coef) > 1e-10:  # Si el coeficiente no es cero
+                        termino_independiente = aumentada[i, -1]  # Término independiente
+                        
+                        if coef > 0:
+                            if len(ecuacion_partes) == 0:
+                                ecuacion_partes.append(f"{coef:.2f}x{col_pivote + 1}")
+                            else:
+                                ecuacion_partes.append(f" + {coef:.2f}x{col_pivote + 1}")
+                        else:
+                            ecuacion_partes.append(f" - {abs(coef):.2f}x{col_pivote + 1}")
+                        
+                        # Agregar término independiente si existe
+                        if abs(termino_independiente) > 1e-10:
+                            if termino_independiente > 0:
+                                ecuacion_partes.append(f" + {termino_independiente:.2f}")
+                            else:
+                                ecuacion_partes.append(f" - {abs(termino_independiente):.2f}")
+                        
+                        break  # Solo una ecuación por variable libre
+            
+            if ecuacion_partes:
+                ecuacion = f"x{var_libre + 1} = {''.join(ecuacion_partes)}"
+            else:
+                ecuacion = f"x{var_libre + 1} = t{var_libre + 1}  (parámetro libre)"
+                
+            ecuaciones.append(ecuacion)
+            
+        return ecuaciones
+    
+    def _verificar_matriz_identidad(self, aumentada: np.ndarray, n: int) -> bool:
+        """
+        Verifica si las columnas pivote forman una matriz identidad.
+        
+        Args:
+            aumentada: Matriz aumentada en forma escalonada reducida
+            n: Numero de variables
+            
+        Returns:
+            True si forma matriz identidad, False en caso contrario
+        """
+        if aumentada is None or len(aumentada.shape) != 2:
+            return False
+            
+        # Para cada columna pivote, verificar que tenga un 1 en la fila correspondiente
+        # y ceros en las demas filas
+        for i, col_pivote in enumerate(self.columnas_pivote):
+            if i >= aumentada.shape[0] or col_pivote >= aumentada.shape[1] - 1:
+                return False
+                
+            # Verificar que hay un 1 en la posicion [i, col_pivote]
+            if abs(aumentada[i, col_pivote] - 1.0) > 1e-10:
+                return False
+                
+            # Verificar que hay ceros en las otras filas de esta columna
+            for j in range(aumentada.shape[0]):
+                if j != i and abs(aumentada[j, col_pivote]) > 1e-10:
+                    return False
+                    
+        return True

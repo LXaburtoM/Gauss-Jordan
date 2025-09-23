@@ -4,13 +4,14 @@ Programa en Python para resolver sistemas de ecuaciones lineales utilizando el m
 
 ## 🎆 Características
 
-### 🌟 **NUEVA CALCULADORA MEJORADA (Versión 2.0)**
+### 🌟 **CALCULADORA MEJORADA v2.0 - ACTUALIZADA**
 - **Interfaz Completamente en Español**: Todo el código y mensajes traducidos
 - **Código Limpio**: Sin emojis en variables/funciones, solo en interfaz
-- **Análisis Completo de Gauss-Jordan**: 
-  - 📍 Detección automática de **columnas pivote**
-  - 🔄 Identificación de **variables libres** 
-  - 🎥 Clasificación: **único, infinito o inconsistente**
+- **Análisis Avanzado de Gauss-Jordan**: 
+  - 📍 Detección automática de **columnas pivote** (mostradas con {})
+  - 🔄 **Variables libres como ecuaciones** (ej: x₃ = 2x₁ + 3x₂) 
+  - 🎥 Clasificación mejorada: **único, infinito o inconsistente**
+  - 📈 Verificación de matriz identidad para determinar inconsistencia
   - 📈 Análisis de rangos (matriz y aumentada)
   - 🔍 Interpretación geométrica del sistema
 - **3 Pestañas de Resultados**:
@@ -19,6 +20,20 @@ Programa en Python para resolver sistemas de ecuaciones lineales utilizando el m
   - 📋 **Información Detallada**: Específica para Gauss-Jordan
 - **Soporte de Matrices Rectangulares**: Sistemas m×n (cualquier dimensión)
 - **Ejemplos Integrados**: Para diferentes tipos de sistemas
+
+### 🔢 **NUEVA: OPERACIONES MATRICIALES**
+- **Suma de Matrices**: A + B con validación de dimensiones
+- **Multiplicación de Matrices**: A × B con verificación automática
+- **Ejemplos Integrados**: Casos predefinidos para pruebas
+- **Interfaz Intuitiva**: Configuración fácil de dimensiones
+- **Resultados Detallados**: Muestra proceso y resultado final
+
+### 🚀 **NUEVO: SISTEMA UNIFICADO - ¡LA MEJOR OPCIÓN!**
+- **🔄 Navegación Sin Cerrar**: Cambia entre interfaces sin reiniciar
+- **🎨 Barra de Navegación**: Botones intuitivos en la parte superior
+- **🧮 + 🔢 Todo en Uno**: Acceso completo a ambas funcionalidades
+- **💾 Memoria Persistente**: Mantiene los datos al cambiar interfaces
+- **🎨 Interfaz Moderna**: Diseño unificado y profesional
 
 ### **Características Originales Mejoradas**
 - **Método de Eliminación de Gauss**: Implementación completa del algoritmo con pivoteo parcial
@@ -49,19 +64,21 @@ Programa en Python para resolver sistemas de ecuaciones lineales utilizando el m
 
 ```
 Calculadora_de_algebra/
-├── main.py                       # Archivo principal para ejecutar
-├── 🌟 calculadora_mejorada.py      # ⭐ NUEVA: Calculadora Mejorada v2.0
-├── calculadora_unificada.py      # Sistema completo original
-├── calculator_gui.py             # Interfaz gráfica básica
-├── calculator_gui_mejorado.py    # Interfaz con matrices rectangulares
-├── modern_calculator_gui.py      # Interfaz moderna con Gauss & Gauss-Jordan
-├── gauss_elimination.py          # Algoritmo de eliminación de Gauss
-├── gauss_elimination_mejorado.py # Gauss para matrices rectangulares
-├── gauss_jordan.py               # Algoritmo de Gauss-Jordan
+├── main.py                       # 🚀 Menú principal de selección
+├── 🚀 sistema_unificado.py         # ⭐ NUEVO: Sistema con navegación fluida
+├── 🧮 calculadora_mejorada.py      # Calculadora Mejorada v2.0
+├── 🔢 operaciones_matriciales.py   # Suma y multiplicación de matrices
+├── gauss_jordan.py               # Algoritmo Gauss-Jordan actualizado
+├── gauss_elimination_mejorado.py # Algoritmo Gauss para matrices rectangulares
+├── calculadora_unificada.py      # Sistema completo original (backup)
+├── calculator_gui.py             # Interfaz básica (backup)
+├── modern_calculator_gui.py      # Interfaz moderna (backup)
+├── gauss_elimination.py          # Algoritmo básico (backup)
 ├── diagnostico.py                # Herramienta de diagnóstico
-├── prueba_gauss_jordan.py        # Demostración de funcionalidades
-├── README.md                     # Este archivo
-└── requirements.txt              # Dependencias del proyecto
+├── prueba_gauss_jordan.py        # Pruebas del algoritmo
+├── prueba_cambios_nuevos.py      # Pruebas de nuevas funcionalidades
+├── README.md                     # Documentación completa
+└── requirements.txt              # Dependencias (solo NumPy)
 ```
 
 ##  Uso
@@ -73,15 +90,19 @@ python main.py
 ```
 
 **Opciones disponibles:**
-1. 🌟 **NUEVA: Calculadora Mejorada** → Versión actualizada con análisis completo
-2. 🎆 **Sistema Completo Original** → Versión unificada anterior  
-3. 💎 **Interfaz Moderna** → Para sistemas cuadrados clásicos
-4. 📟 **Interfaz Clásica** → Básica y simple
+1. 🚀 **SISTEMA UNIFICADO** → Navegación fluida entre todas las funcionalidades
+2. 🧮 **CALCULADORA MEJORADA v2.0** → Solo sistemas de ecuaciones lineales
+3. 🔢 **OPERACIONES MATRICIALES** → Solo suma y multiplicación de matrices
 
-### Ejecutar Directamente la Calculadora Mejorada
+### Ejecutar Directamente las Aplicaciones
 
 ```bash
-python calculadora_mejorada.py
+# RECOMENDADO: Sistema unificado (navegar sin cerrar)
+python sistema_unificado.py
+
+# O individualmente:
+python calculadora_mejorada.py      # Solo sistemas de ecuaciones
+python operaciones_matriciales.py   # Solo operaciones matriciales
 ```
 
 ### Interfaz de Usuario
