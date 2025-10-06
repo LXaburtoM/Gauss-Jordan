@@ -61,6 +61,8 @@ def main():
         # Variable para almacenar la elección
         choice = {'value': None}
         
+        
+        
         def select_choice(val):
             choice['value'] = val
             root.quit()  # Cambiar destroy por quit para salir del mainloop
@@ -150,6 +152,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
 
